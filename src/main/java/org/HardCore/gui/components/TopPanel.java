@@ -6,6 +6,7 @@ import org.HardCore.gui.ui.MyUI;
 import org.HardCore.model.objects.dto.Student;
 import org.HardCore.model.objects.dto.Unternehmen;
 import org.HardCore.model.objects.dto.User;
+import org.HardCore.process.control.LoginControl;
 import org.HardCore.services.util.Roles;
 import org.HardCore.services.util.Views;
 
@@ -21,19 +22,16 @@ public class TopPanel extends HorizontalLayout {
         this.setComponentAlignment(headlabel, Alignment.TOP_LEFT);
 
 
-        //Willkommenstext oben Mitte
+        //Willkommenstext oben rechts
         HorizontalLayout hlayout = new HorizontalLayout();
         User user = ( (MyUI)MyUI.getCurrent() ).getUser();
-        String name = null;
         Label welcome = null;
-        if (user instanceof Student) {
-            Student student = (Student) user;
-            name = student.getVorname();
-            welcome = new Label("Willkommen " + name + "!");
-        } else if (user instanceof Unternehmen) {
-            Unternehmen firma = (Unternehmen) user;
-            name = firma.getName();
-            welcome = new Label("Willkommen " + name + "!");
+        if (user == null) {
+            welcome = new Label("Willkommen bei HardCore!");
+        } else if ( user.hasRole(Roles.STUDENT) && user.getVorname() != null ) {
+            welcome = new Label("Willkommen " + user.getVorname() + "!");
+        } else if (user.hasRole(Roles.UNTERNEHMEN) && user.getName() != null ) {
+            welcome = new Label("Willkommen " + user.getName() + "!");
         } else {
             welcome = new Label("Willkommen bei HardCore!");
         }
@@ -62,21 +60,29 @@ public class TopPanel extends HorizontalLayout {
             });
         }
 
-        //Unternehmer Menü
-        if ( user.hasRole(Roles.UNTERNEHMER) ) {
+        //Profil
+        if (user != null) {
             item1.addItem("Profil", VaadinIcons.USER, null);
-            item1.addItem("Meine Stellenanzeigen", VaadinIcons.FILE_TEXT_O, null);
-            item1.addItem("Logout", VaadinIcons.SIGN_OUT, null);
+
+            //Unternehmer Menü
+            if ( user.hasRole(Roles.UNTERNEHMEN) ) {
+                item1.addItem("Meine Stellenanzeigen", VaadinIcons.FILE_TEXT_O, null);
+            }
+
+            //Student Menü
+            if ( user.hasRole(Roles.STUDENT) ) {
+                item1.addItem("Meine Bewerbungen", VaadinIcons.FILE_TEXT_O, null);
+            }
+
+            item1.addItem("Logout", VaadinIcons.SIGN_OUT, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem menuItem) {
+                    LoginControl.logoutUser();
+                }
+            });
         }
 
-        //Student Menü
-        if ( user.hasRole(Roles.STUDENT) ) {
-            item1.addItem("Profil", VaadinIcons.USER, null);
-            item1.addItem("Meine Bewerbungen", VaadinIcons.FILE_TEXT_O, null);
-            item1.addItem("Logout", VaadinIcons.SIGN_OUT, null);
-        }
-
-
+        //Einfügen
         hlayout.addComponent(bar);
         this.addComponent(hlayout);
         this.setComponentAlignment(hlayout, Alignment.TOP_RIGHT);

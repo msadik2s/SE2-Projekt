@@ -1,11 +1,14 @@
 package org.HardCore.gui.views;
 
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import org.HardCore.gui.components.TopPanel;
+import org.HardCore.model.objects.dto.User;
 import org.HardCore.process.control.LoginControl;
 import org.HardCore.process.control.exceptions.DatabaseException;
 import org.HardCore.process.control.exceptions.NoSuchUserOrPassword;
@@ -25,6 +28,10 @@ public class LoginView extends VerticalLayout implements View {
 
         //Login Felder
         final TextField userLogin = new TextField("Email:");
+        Binder<User> binder = new Binder<>();
+        binder.forField(userLogin)
+                .withValidator(new EmailValidator("Biite geben Sie eine korrekte Emailadresse ein!"))
+                .bind(User::getEmail, User::setEmail);
         final PasswordField passwordField = new PasswordField("Passwort:");
 
         //Login Button

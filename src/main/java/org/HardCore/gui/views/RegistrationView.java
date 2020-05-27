@@ -12,6 +12,7 @@ import org.HardCore.process.control.RegistrationControl;
 import org.HardCore.process.control.exceptions.DatabaseException;
 import org.HardCore.process.control.exceptions.EmailInUseException;
 import org.HardCore.process.control.exceptions.NoEqualPasswordException;
+import org.HardCore.services.util.Roles;
 
 public class RegistrationView extends VerticalLayout implements View {
 
@@ -38,6 +39,10 @@ public class RegistrationView extends VerticalLayout implements View {
         final PasswordField fieldPassword2 = new PasswordField("Passwort wiederholen:");
         fieldPassword2.setRequiredIndicatorVisible(true);
 
+        //Checkbox
+        RadioButtonGroup<String> radioButtonGroup = new RadioButtonGroup("Registrieren als:");
+        radioButtonGroup.setItems("Student", "Unternehmen");
+
         //Register Button
         Button registerButton = new Button("Registrieren");
         registerButton.addClickListener(new Button.ClickListener() {
@@ -46,10 +51,11 @@ public class RegistrationView extends VerticalLayout implements View {
                 String email = fieldEmail.getValue();
                 String password1 = fieldPassword1.getValue();
                 String password2 = fieldPassword2.getValue();
+                String regAs = radioButtonGroup.getValue();
 
                 try {
                     RegistrationControl.checkValid( email, password1, password2 );
-                    RegistrationControl.registerUser( email, password1 );
+                    RegistrationControl.registerUser( email, password1, regAs );
                 } catch (NoEqualPasswordException e) {
                     Notification.show("Passwort-Fehler", e.getReason(), Notification.Type.WARNING_MESSAGE);
                 } catch (DatabaseException e) {
@@ -65,6 +71,7 @@ public class RegistrationView extends VerticalLayout implements View {
         verticalLayout.addComponent(fieldEmail);
         verticalLayout.addComponent(fieldPassword1);
         verticalLayout.addComponent(fieldPassword2);
+        verticalLayout.addComponent(radioButtonGroup);
         verticalLayout.addComponent(registerButton);
 
         //Panel

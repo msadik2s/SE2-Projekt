@@ -1,8 +1,8 @@
 package org.HardCore.model.objects.dto;
 
 public class Student extends User{
+    private String vorname = "Student";
 
-    private String vorname;
 
     public String getVorname() {
         return vorname;

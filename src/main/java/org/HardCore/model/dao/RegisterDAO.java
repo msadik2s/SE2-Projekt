@@ -4,6 +4,7 @@ import org.HardCore.model.objects.dto.User;
 
 import java.sql.*;
 
+
 public class RegisterDAO extends AbstractDAO {
     private static RegisterDAO dao = null;
 
@@ -26,11 +27,35 @@ public class RegisterDAO extends AbstractDAO {
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPassword());
             statement.executeUpdate();
-
             return true;
         } catch (SQLException ex) {
             return false;
         }
     }
 
+    public boolean addStudent(User user) {
+        String sql = "INSERT INTO collhbrs.student(id) VALUES (?)";
+        PreparedStatement statement = this.getPreparedStatement(sql);
+
+        try {
+            statement.setInt(1, user.getId());
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    public boolean addUnternehmen(User user) {
+        String sql = "INSERT INTO collhbrs.unternehmen(id) VALUES (?)";
+        PreparedStatement statement = this.getPreparedStatement(sql);
+
+        try {
+            statement.setInt(1, user.getId());
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
 }
